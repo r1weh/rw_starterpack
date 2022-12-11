@@ -18,7 +18,6 @@ AddEventHandler("rw:starterpack:ambil", function()
     local _rw = source
     local _riweh = ESX.GetPlayerFromId(_rw)
     _riweh.addInventoryItem('box', 1)
-    TriggerClientEvent("rri-notify:Icon",_riweh._rw,"Selamat Anda Mendapatkan Hadiah ^^","top-right",2500,"blue-10","white",true,"mdi-bank")
     updateUser(_rw, function(result)
         if result then
         end
@@ -30,7 +29,7 @@ ESX.RegisterUsableItem('box', function(source)
     for k,v in pairs(Config.items) do
       xPlayer.addInventoryItem(v, 15)
       xPlayer.addInventoryItem('phone', 1)
-	  xPlayer.removeInventoryItem("box", 1)
+      xPlayer.removeInventoryItem("box", 1)
     end
 end)
 
