@@ -4,7 +4,7 @@ Config.PlateLetters  = 1
 Config.PlateNumbers  = 3
 Config.PlateLetters2  = 2
 Config.PlateUseSpace = true
-
+Config.Framework = '' -- Framework yang kamu gunakan ada 3 Opsi ESX-New | Esx-old | QbCore
 Config.vehicleModel = "r820"
 
 Config.items = {

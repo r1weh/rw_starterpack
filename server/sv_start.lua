@@ -1,8 +1,20 @@
-ESX = nil 
+CoreName= nil
 
-TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end) 
+if Config.Framework == 'Esx-old' then
+Citizen.CreateThread(function()
+    while CoreName == nil do
+        TriggerEvent('esx:getSharedObject', function(obj) CoreName = obj end)
+        Citizen.Wait(0)
+    end 
+    CoreName.PlayerData = CoreName.GetPlayerData()
+end)
+elseif Config.Framework == 'QbCore' then
+    CoreName = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == 'ESX-New' then
+    CoreName = exports['es_extended']:getSharedObject()
+end
 
-ESX.RegisterServerCallback('rw_starterpack:check', function(source,cb) 
+CoreName.Functions.CreateCallback('rw_starterpack:check', function(source,cb) 
     local _rw = source
     checkIfUsed(_rw, function(result)
         if result then
@@ -16,7 +28,7 @@ end)
 RegisterServerEvent("rw:starterpack:ambil")
 AddEventHandler("rw:starterpack:ambil", function()
     local _rw = source
-    local _riweh = ESX.GetPlayerFromId(_rw)
+    local _riweh = CoreName.Functions.GetPlayer(_rw)
     _riweh.addInventoryItem('box', 1)
     updateUser(_rw, function(result)
         if result then
@@ -25,7 +37,7 @@ AddEventHandler("rw:starterpack:ambil", function()
 end)
 
 ESX.RegisterUsableItem('box', function(source)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local xPlayer = CoreName.Functions.GetPlayer(source)
     for k,v in pairs(Config.items) do
       xPlayer.addInventoryItem(v, 15)
       xPlayer.addInventoryItem('phone', 1)
@@ -35,16 +47,16 @@ end)
 
 RegisterServerEvent("antirpquestion:success")
 AddEventHandler("antirpquestion:success", function(plate)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local xPlayer = CoreName.Functions.GetPlayer(source)
     local model = Config.vehicleModel
     
     MySQL.Async.execute("UPDATE users SET riweh_rp='made' WHERE identifier = @username", {
-        ['@username'] = xPlayer.identifier
+        ['@username'] = xPlayer.PlayerData.charinfo
     }, function()
     end)
 
     MySQL.Async.execute('INSERT INTO owned_vehicles (owner, plate, vehicle) VALUES (@owner, @plate, @vehicle)', {
-        ['@owner']   = xPlayer.identifier,
+        ['@owner']   = xPlayer.PlayerData.charinfo,
         ['@plate']   = plate,
         ['@vehicle'] = json.encode({model = GetHashKey(model), plate = plate})
     }, function(rowsChanged)

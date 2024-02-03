@@ -1,12 +1,18 @@
-ESX = nil
+CoreName= nil
 
+if Config.Framework == 'Esx-old' then
 Citizen.CreateThread(function()
-    while ESX == nil do
-        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    while CoreName == nil do
+        TriggerEvent('esx:getSharedObject', function(obj) CoreName = obj end)
         Citizen.Wait(0)
     end 
-    ESX.PlayerData = ESX.GetPlayerData()
+    CoreName.PlayerData = CoreName.GetPlayerData()
 end)
+elseif Config.Framework == 'QbCore' then
+    CoreName = exports['qb-core']:GetCoreObject()
+elseif Config.Framework == 'ESX-New' then
+    CoreName = exports['es_extended']:getSharedObject()
+end
 
 --=======================--
 --======= Ped NPC =======--
@@ -55,7 +61,9 @@ exports.qtarget:AddTargetModel(pedambilnya, {
 
 RegisterNetEvent('rw:ambilstarter')
 AddEventHandler('rw:ambilstarter', function()
-    ESX.TriggerServerCallback('rw_starterpack:check', function(hasChecked)
+    local QbCore = Functions.TriggerCallback
+    local esx = TriggerServerCallback
+    CoreName.QbCore('rw_starterpack:check', function(hasChecked)
         if hasChecked then
             TriggerEvent("rri-notify:Icon","Kamu Sudah ambil ya!,sebelumnya!","top-right",2500,"red-10","white",true,"mdi-alert-box")
         else
@@ -72,7 +80,7 @@ AddEventHandler('masriweh:giveRewards', function()
 
   TriggerServerEvent('antirpquestion:success', generatedPlate)
 
-    ESX.Game.SpawnVehicle(Config.vehicleModel, Config.Zones.CarSpawn.Pos, Config.Zones.CarSpawn.Heading, function(vehicle)
+  QBCore.Functions.SpawnVehicle(Config.vehicleModel, Config.Zones.CarSpawn.Pos, Config.Zones.CarSpawn.Heading, function(vehicle)
     TaskWarpPedIntoVehicle(playerPed, vehicle, -1)
     SetVehicleNumberPlateText(vehicle, generatedPlate)
 
@@ -118,8 +126,10 @@ end
 
 function IsPlateTaken(plate)
 	local callback = 'waiting'
+    local QbCore = Functions.TriggerCallback
+    local esx = TriggerServerCallback
 
-	ESX.TriggerServerCallback('esx_vehicleshop:isPlateTaken', function(isPlateTaken)
+	CoreName.QbCore('esx_vehicleshop:isPlateTaken', function(isPlateTaken)
 		callback = isPlateTaken
 	end, plate)
 

@@ -2,7 +2,7 @@ usedPlayers = {}
 
 checkIfUsed = function(id, cb)
     local _rw = id
-    local xPlayer = ESX.GetPlayerFromId(_rw)
+    local xPlayer = CoreName.Functions.GetPlayer(_rw)
     for k, v in pairs(usedPlayers) do
         if v.id == _rw then
             print("[INFO] Checked player trying to get his pack back")
@@ -43,7 +43,7 @@ end
 
 updateUser = function(id, cb)
     local _rw = id
-    local xPlayer = ESX.GetPlayerFromId(_rw)
+    local xPlayer = CoreName.Functions.GetPlayer(_rw)
     table.insert(usedPlayers, {id = _rw})
     MySQL.Async.execute("UPDATE users SET getStarter = @getStarter WHERE identifier = @identifier", {
         ['@getStarter'] = 1,
